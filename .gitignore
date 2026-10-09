@@ -1,0 +1,12 @@
+# Dependencies
+node_modules/
+
+# Environment Variables & Secrets
+.env
+
+# Database / Prisma
+*.db
+
+# Operating System & Editors
+.DS_Store
+.vscode/
