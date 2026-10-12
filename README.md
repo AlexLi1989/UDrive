@@ -18,7 +18,7 @@ UDrive is a web application that allows registered user to upload files(up to 50
 ## Features
 
 - ** User Authentication:** Secure registration and login.
-- ** Single-Tier Folder Management (CRUD):** Users can Create, Read, Update, and Delete folders at the root directory.
+- ** Multi-Tier Nested Folder Management (CRUD):** Users can Create, Read, Update, and Delete folders at the root level or inside any other folder, supporting an infinite directory tree.
 - ** File Organization:** Assign or add files to folders. Users can freely move files between specific folders or back out to the root directory.
 - ** Dynamic Storage Controls (50MB Limit):**
   - User storage consumption is calculated dynamically via database aggregation (`SUM`) on demand.
@@ -75,7 +75,7 @@ UDrive/
 
 ## Database Architecture
 
-The system uses a 3-table relational schema designed to map out a single-tier folder layout where files can either belong to a folder or float independently in the root directory.
+The system uses a 3-table relational schema designed to map out a multi-tier nested directory structure where folders can contain other sub-folders where files can either belong to a folder or float independently in the root directory.
 
 ### 1. UML Class Diagram
 
@@ -83,11 +83,13 @@ The system uses a 3-table relational schema designed to map out a single-tier fo
 erDiagram
     USER ||--o{ FOLDER : "owns"
     USER ||--o{ FILE : "owns"
+    FOLDER ||--o{ FOLDER : "contains"
     FOLDER |o--o{ FILE : "contains"
 
     USER {
         String id PK
         String email UK
+        String username
         String password
         DateTime createdAt
     }
@@ -96,6 +98,7 @@ erDiagram
         String id PK
         String name
         String userId FK
+        String parentId FK "Null = root folder"
         DateTime createdAt
     }
 
@@ -113,7 +116,7 @@ erDiagram
 
 ### 2. Table Specifications
 
-#### Users
+#### User
 
 Stores secure user credentials. Cascade deletes are tied to this table to ensure all dependent folders and files are purged if an account is deleted.
 
@@ -125,18 +128,19 @@ Stores secure user credentials. Cascade deletes are tied to this table to ensure
 | `role`      | String   | -               | User role (admin, user(default)) |
 | `createdAt` | DateTime | @default(now()) | Account registration timestamp   |
 
-#### Folders
+#### Folder
 
-Created only at the root directory level. Due to the single-tier product design, folders cannot be nested inside other folders. Cascade deletes are tied to this table to ensure all dependent files are purged if a folder is deleted.
+Can be created at the root level or nested inside another folder to support a multi-tier directory structure. Cascade deletes are configured so that deleting a parent folder automatically purges all its sub-folders and contained files.
 
-| Field       | Type     | Attributes      | Description               |
-| :---------- | :------- | :-------------- | :------------------------ |
-| `id`        | String   | @id, UUID       | Unique folder identifier  |
-| `name`      | String   | -               | Custom folder name        |
-| `userId`    | String   | FK (User.id)    | Owner identifier          |
-| `createdAt` | DateTime | @default(now()) | Folder creation timestamp |
+| Field       | Type     | Attributes               | Description                              |
+| :---------- | :------- | :----------------------- | :--------------------------------------- |
+| `id`        | String   | @id, UUID                | Unique folder identifier                 |
+| `name`      | String   | -                        | Custom folder name                       |
+| `userId`    | String   | FK (User.id)             | Owner identifier                         |
+| `parentId`  | String?  | FK (Folder.id), Optional | Parent folder; `null` if located at root |
+| `createdAt` | DateTime | @default(now())          | Folder creation timestamp                |
 
-#### Files
+#### File
 
 Stores file metadata. The physical object is hosted on cloud storage, while this table links the access `url`. An optional `folderId` maps its location.
 
@@ -169,18 +173,18 @@ Since **UDrive** uses **EJS** for Server-Side Rendering (SSR), page navigation a
 
 ### Folder Management (`/folders`)
 
-| Method | Endpoint              | Access | Description                                           |
-| :----- | :-------------------- | :----- | :---------------------------------------------------- |
-| `POST` | `/folders`            | Auth   | Creates a new folder at the root directory level      |
-| `POST` | `/folders/:id/update` | Auth   | Renames an existing folder metadata entity            |
-| `POST` | `/folders/:id/delete` | Auth   | Deletes folder and triggers Prisma cascade file purge |
+| Method | Endpoint              | Access | Description                                                                  |
+| :----- | :-------------------- | :----- | :--------------------------------------------------------------------------- |
+| `POST` | `/folders`            | Auth   | Creates a new folder (supports creating sub-folders if parentId is provided) |
+| `POST` | `/folders/:id/update` | Auth   | Renames an existing folder metadata entity                                   |
+| `POST` | `/folders/:id/delete` | Auth   | Deletes folder and triggers Prisma cascade file purge                        |
 
-### Drive Dashboard & File Management (`/`)
+### Dashboard & File Management (`/`)
 
 | Method | Endpoint            | Access        | Description                                                                                                                 |
 | :----- | :------------------ | :------------ | :-------------------------------------------------------------------------------------------------------------------------- |
 | `GET`  | `/`                 | Mixed\*       | **Root Dashboard.** Shows entry portal if guest, or renders folders, root files, and dynamic 50MB tracker if authenticated. |
-| `GET`  | `/folders/:id`      | Auth          | **Inside Folder View.** Displays assets nested under target directory and active upload portals.                            |
+| `GET`  | `/folders/:id`      | Auth          | **Inside Folder View.** Displays sub-folders and files nested under the target directory, along with a breadcrumb path.     |
 | `GET`  | `/files/:id`        | Auth          | **File Inspector.** Renders detail modal for viewing file details.                                                          |
 | `POST` | `/files/upload`     | Multer + Auth | Validates 50MB cap / 5MB single file check. Commits metadata via Prisma and pipes binary to Cloudinary.                     |
 | `POST` | `/files/:id/update` | Auth          | Modifies active file parameters (renaming or altering `folderId` path placement).                                           |

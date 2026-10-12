@@ -10,3 +10,4 @@ node_modules/
 # Operating System & Editors
 .DS_Store
 .vscode/
+/generated/prisma
