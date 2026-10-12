@@ -98,7 +98,7 @@ erDiagram
         String id PK
         String name
         String userId FK
-        String parentId FK "Null = root folder"
+        String parentId FK
         DateTime createdAt
     }
 
@@ -109,7 +109,7 @@ erDiagram
         Int size
         String mimeType
         String userId FK
-        String folderId FK "Null = root directory"
+        String folderId FK
         DateTime createdAt
     }
 ```
