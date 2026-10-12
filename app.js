@@ -1,20 +1,28 @@
-import { express } from "express";
-import { path } from "node:path";
-import prismaSessionConfig from "./config/prismaSession";
-import { passport } from "passport";
-import("./config/passport");
+import express from "express";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import prismaSessionConfig from "./config/prismaSession.js";
+import passport from "passport";
+import "./config/passport.js";
 //routers
-import indexRouter from "./routes/indexRouter";
-import authRouter from "./routes/authRouter";
+import authRouter from "./routes/auth.route.js";
+import indexRouter from "./routes/index.route.js";
+import folderRouter from "./routes/folder.route.js";
+import fileRouter from "./routes/file.route.js";
+
 //middleware
-import notFoundHandler from "./middlewares/notFoundHandler";
-import errorHandler from "./middlewares/errorHandler";
+import ensureAuthenticated from "./middlewares/ensureAuthenticated.js";
+import userContext from "./middlewares/userContext.js";
+import notFoundHandler from "./middlewares/notFoundHandler.js";
+import errorHandler from "./middlewares/errorHandler.js";
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-app.set("views", path.join(__dirname, "views"));
+app.use(express.static(join(__dirname, "public")));
+app.set("views", join(__dirname, "views"));
 app.set("view engine", "ejs");
-app.use(express.static(path.join(__dirname, "../public")));
 app.use(express.urlencoded({ extended: true }));
 
 //session config
@@ -25,20 +33,14 @@ app.use(prismaSessionConfig);
 app.use(passport.session());
 
 //setting global current user
-app.use((req, res, next) => {
-  res.locals.currentUser = req.user;
-  if (req.session) {
-    res.locals.loginErrors = req.session.messages || [];
-    req.session.messages = [];
-  } else {
-    res.locals.loginErrors = [];
-  }
-  next();
-});
+app.use(userContext);
 
 //routes
-app.use("/", indexRouter);
 app.use("/auth", authRouter);
+app.use("/", indexRouter);
+app.use(ensureAuthenticated);
+app.use("/folders", folderRouter);
+app.use("/files", fileRouter);
 
 //404 route
 app.use(notFoundHandler);
