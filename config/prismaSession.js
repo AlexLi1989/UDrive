@@ -1,5 +1,6 @@
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
-import { prisma } from "./lib/prisma.js";
+import { prisma } from "../lib/prisma.js";
+import expressSession from "express-session";
 
 const prismaSessionConfig = expressSession({
   cookie: {
