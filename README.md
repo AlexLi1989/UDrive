@@ -60,10 +60,10 @@ UDrive/
 │ ├── user.js # User DB queries
 │ ├── directory.js # Directory DB queries
 │ └── file.js # File DB queries
-├── controller/ # Route handler logic
+├── controllers/ # Route handler logic
 ├── routes/ # Express routers
-├── middleware/ # Auth guards, error handlers
-├── validator/ # express-validator
+├── middlewares/ # Auth guards, error handlers
+├── validators/ # express-validator
 ├── views/ # EJS templates
 ├── public/ # Static assets (CSS, images...)
 ├── config/ # Passport strategy, session config

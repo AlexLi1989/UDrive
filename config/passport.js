@@ -1,7 +1,7 @@
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcryptjs");
-const pool = require("./pool");
+import passport from "passport";
+import LocalStrategy from "passport-local";
+import bcrypt from "bcryptjs";
+import prisma from "../lib/prisma.js";
 
 //setting up local strategy
 passport.use(
@@ -9,11 +9,7 @@ passport.use(
     { usernameField: "email" },
     async (email, password, done) => {
       try {
-        const { rows } = await pool.query(
-          "SELECT * FROM users WHERE email = $1",
-          [email],
-        );
-        const user = rows[0];
+        const user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
           return done(null, false, { message: "Incorrect email or password" });
@@ -32,21 +28,19 @@ passport.use(
 
 //serialization
 passport.serializeUser((user, done) => {
-  done(null, user.user_id); //storing user id
+  done(null, user.id); //storing user id
 });
 
-passport.deserializeUser(async (user_id, done) => {
+passport.deserializeUser(async (userId, done) => {
   try {
-    const { rows } = await pool.query(
-      "SELECT * FROM users WHERE user_id = $1",
-      [user_id],
-    );
-    const user = rows[0];
-
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, username: true, role: true }, //select role too for future admin access
+    });
     done(null, user);
   } catch (err) {
     done(err);
   }
 });
 
-module.exports = passport;
+export { passport };

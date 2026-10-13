@@ -11,7 +11,7 @@ import folderRouter from "./routes/folder.route.js";
 import fileRouter from "./routes/file.route.js";
 
 //middleware
-import ensureAuthenticated from "./middlewares/ensureAuthenticated.js";
+import { ensureAuthenticated } from "./middlewares/ensureAuthenticated.js";
 import userContext from "./middlewares/userContext.js";
 import notFoundHandler from "./middlewares/notFoundHandler.js";
 import errorHandler from "./middlewares/errorHandler.js";
