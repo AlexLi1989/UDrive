@@ -17,4 +17,4 @@ function ensureAuthenticated(req, res, next) {
   return next();
 }
 
-export { ensureAuthenticated };
+export default ensureAuthenticated;

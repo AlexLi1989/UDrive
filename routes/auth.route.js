@@ -3,7 +3,7 @@ import { Router } from "express";
 const authRouter = Router();
 import authController from "../controllers/auth.controller.js";
 import redirectIfAuthenticated from "../middlewares/redirectIfAuthenticated.js";
-import { ensureAuthenticated } from "../middlewares/ensureAuthenticated.js";
+import ensureAuthenticated from "../middlewares/ensureAuthenticated.js";
 import validateUser from "../validators/validateUser.js";
 import handleValidationErrors from "../middlewares/handleValidationErrors.js";
 

@@ -173,22 +173,27 @@ Since **UDrive** uses **EJS** for Server-Side Rendering (SSR), page navigation a
 
 ### Folder Management (`/folders`)
 
-| Method | Endpoint              | Access | Description                                                                  |
-| :----- | :-------------------- | :----- | :--------------------------------------------------------------------------- |
-| `POST` | `/folders`            | Auth   | Creates a new folder (supports creating sub-folders if parentId is provided) |
-| `POST` | `/folders/:id/update` | Auth   | Renames an existing folder metadata entity                                   |
-| `POST` | `/folders/:id/delete` | Auth   | Deletes folder and triggers Prisma cascade file purge                        |
+| Method | Endpoint              | Access | Description                                                                                                             |
+| :----- | :-------------------- | :----- | :---------------------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/folders/:id`        | Auth   | **Inside Folder View.** Displays sub-folders and files nested under the target directory, along with a breadcrumb path. |
+| `POST` | `/folders`            | Auth   | Creates a new folder (supports creating sub-folders if parentId is provided)                                            |
+| `POST` | `/folders/:id/update` | Auth   | Renames an existing folder metadata entity                                                                              |
+| `POST` | `/folders/:id/delete` | Auth   | Deletes folder and triggers Prisma cascade file purge                                                                   |
+
+### File Management (`/files`)
+
+| Method | Endpoint            | Access        | Description                                                                                             |
+| :----- | :------------------ | :------------ | :------------------------------------------------------------------------------------------------------ |
+| `GET`  | `/files/:id`        | Auth          | **File Inspector.** Renders detail modal for viewing file details.                                      |
+| `POST` | `/files/upload`     | Multer + Auth | Validates 50MB cap / 5MB single file check. Commits metadata via Prisma and pipes binary to Cloudinary. |
+| `POST` | `/files/:id/update` | Auth          | Modifies active file parameters (renaming or altering `folderId` path placement).                       |
+| `POST` | `/files/:id/delete` | Auth          | Purges file record from database and destroys physical object in Cloudinary.                            |
 
 ### Dashboard & File Management (`/`)
 
-| Method | Endpoint            | Access        | Description                                                                                                                 |
-| :----- | :------------------ | :------------ | :-------------------------------------------------------------------------------------------------------------------------- |
-| `GET`  | `/`                 | Mixed\*       | **Root Dashboard.** Shows entry portal if guest, or renders folders, root files, and dynamic 50MB tracker if authenticated. |
-| `GET`  | `/folders/:id`      | Auth          | **Inside Folder View.** Displays sub-folders and files nested under the target directory, along with a breadcrumb path.     |
-| `GET`  | `/files/:id`        | Auth          | **File Inspector.** Renders detail modal for viewing file details.                                                          |
-| `POST` | `/files/upload`     | Multer + Auth | Validates 50MB cap / 5MB single file check. Commits metadata via Prisma and pipes binary to Cloudinary.                     |
-| `POST` | `/files/:id/update` | Auth          | Modifies active file parameters (renaming or altering `folderId` path placement).                                           |
-| `POST` | `/files/:id/delete` | Auth          | Purges file record from database and destroys physical object in Cloudinary.                                                |
+| Method | Endpoint | Access  | Description                                                                                                                 |
+| :----- | :------- | :------ | :-------------------------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/`      | Mixed\* | **Root Dashboard.** Shows entry portal if guest, or renders folders, root files, and dynamic 50MB tracker if authenticated. |
 
 ---
 
