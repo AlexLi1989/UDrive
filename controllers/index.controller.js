@@ -26,7 +26,7 @@ async function indexGet(req, res, next) {
       TOTAL_USAGE: totalUsage,
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 

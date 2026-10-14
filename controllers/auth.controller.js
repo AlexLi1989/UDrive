@@ -35,7 +35,7 @@ async function userCreatePost(req, res, next) {
     });
     return res.redirect("/");
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
