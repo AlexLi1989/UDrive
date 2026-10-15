@@ -1,12 +1,11 @@
 import { body } from "express-validator";
 import { findUserEmail } from "../db/user.js";
 
-const nameLengthErr = "Must be between 1 and 50 characters.";
 const validateUser = [
   body("username")
     .trim()
     .isLength({ min: 1, max: 50 })
-    .withMessage(nameLengthErr)
+    .withMessage("Must be between 1 and 50 characters.")
     .escape(),
   body("email")
     .trim()

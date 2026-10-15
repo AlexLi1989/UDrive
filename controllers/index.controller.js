@@ -1,4 +1,4 @@
-import { getRootFolders, getRootFiles } from "../db/directory.js";
+import { getRootContents } from "../db/directory.js";
 import { calcTotalUsage } from "../db/file.js";
 
 async function indexGet(req, res, next) {
@@ -11,14 +11,13 @@ async function indexGet(req, res, next) {
   //route for authenticated user
   const userId = req.user.id;
   try {
-    const [rootFolders, rootFiles, totalUsage] = await Promise.all([
-      //fetch root folders
-      getRootFolders(userId),
-      //fetch root files
-      getRootFiles(userId),
+    const [rootContent, totalUsage] = await Promise.all([
+      //fetch root folders and files
+      getRootContents(userId),
       //calculate total usage
       calcTotalUsage(userId),
     ]);
+    const { rootFolders, rootFiles } = rootContent;
     return res.render("dashboard", {
       TITLE: "Welcome to UDrive",
       FOLDERS: rootFolders,

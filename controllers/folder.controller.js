@@ -2,10 +2,8 @@ import { matchedData } from "express-validator";
 import {
   verifyFolderOwner,
   getFolderBreadcrumbs,
-  getNonRootFolders,
-  getNonRootFiles,
-  getRootFolders,
-  getRootFiles,
+  getFolderContents,
+  getRootContents,
   createFolder,
   updateFolder,
   findParentFolder,
@@ -25,13 +23,11 @@ async function folderGet(req, res, next) {
     return next(error);
   }
   try {
-    const [breadcrumbs, folders, files, totalUsage] = await Promise.all([
+    const [breadcrumbs, { folders, files }, totalUsage] = await Promise.all([
       //breadcrumbs
-      getFolderBreadcrumbs(folderId),
-      //fetch folders under parent folder
-      getNonRootFolders(folderId),
-      //fetch files under parent folder
-      getNonRootFiles(folderId),
+      getFolderBreadcrumbs(folderId, userId),
+      //fetch folders and files under parent folder
+      getFolderContents(folderId),
       //calculate total usage
       calcTotalUsage(userId),
     ]);
@@ -61,13 +57,11 @@ async function folderCreatePost(req, res, next) {
       const totalUsage = await calcTotalUsage(userId);
       //creation at non root level
       if (parentId) {
-        const [breadcrumbs, folders, files] = await Promise.all([
+        const [breadcrumbs, { folders, files }] = await Promise.all([
           //breadcrumbs
-          getFolderBreadcrumbs(parentId),
-          //fetch folders under parent folder
-          getNonRootFolders(parentId),
-          //fetch files under parent folder
-          getNonRootFiles(parentId),
+          getFolderBreadcrumbs(parentId, userId),
+          //fetch folders and files under parent folder
+          getFolderContents(parentId),
         ]);
         const currentFolderName =
           breadcrumbs[breadcrumbs.length - 1]?.name || "Folder";
@@ -83,12 +77,11 @@ async function folderCreatePost(req, res, next) {
         });
         //creation at root level
       } else {
-        const [rootFolders, rootFiles] = await Promise.all([
-          //fetch root folders
-          getRootFolders(userId),
-          //fetch root files
-          getRootFiles(userId),
+        const [rootContent] = await Promise.all([
+          //fetch root folders and files
+          getRootContents(userId),
         ]);
+        const { rootFolders, rootFiles } = rootContent;
         return res.status(400).render("dashboard", {
           TITLE: "Welcome to UDrive",
           FOLDERS: rootFolders,
@@ -100,7 +93,7 @@ async function folderCreatePost(req, res, next) {
         });
       }
     }
-    await createFolder({ name, parentId, userId });
+    await createFolder(name, parentId, userId);
     return parentId ? res.redirect(`/folders/${parentId}`) : res.redirect("/");
   } catch (error) {
     return next(error);
@@ -119,13 +112,11 @@ async function folderUpdatePost(req, res, next) {
       const totalUsage = await calcTotalUsage(userId);
       //update at non root level
       if (parentId) {
-        const [breadcrumbs, folders, files] = await Promise.all([
+        const [breadcrumbs, { folders, files }] = await Promise.all([
           //breadcrumbs
           getFolderBreadcrumbs(parentId),
-          //fetch folders under parent folder
-          getNonRootFolders(parentId),
-          //fetch files under parent folder
-          getNonRootFiles(parentId),
+          //fetch folders and files under parent folder
+          getFolderContents(parentId),
         ]);
         const currentFolderName =
           breadcrumbs[breadcrumbs.length - 1]?.name || "Folder";
@@ -141,12 +132,11 @@ async function folderUpdatePost(req, res, next) {
         });
         //update at root level
       } else {
-        const [rootFolders, rootFiles] = await Promise.all([
-          //fetch root folders
-          getRootFolders(userId),
-          //fetch root files
-          getRootFiles(userId),
+        const [rootContent] = await Promise.all([
+          //fetch root folders and files
+          getRootContents(userId),
         ]);
+        const { rootFolders, rootFiles } = rootContent;
         return res.status(400).render("dashboard", {
           TITLE: "Welcome to UDrive",
           FOLDERS: rootFolders,
@@ -158,7 +148,7 @@ async function folderUpdatePost(req, res, next) {
         });
       }
     }
-    await updateFolder({ folderId, name });
+    await updateFolder(folderId, name);
     return parentId ? res.redirect(`/folders/${parentId}`) : res.redirect("/");
   } catch (error) {
     return next(error);
@@ -170,8 +160,8 @@ async function folderDeletePost(req, res, next) {
   const userId = req.user.id;
   const folderId = req.params.id;
   try {
-    const parentId = await findParentFolder(userId, folderId);
     await verifyFolderOwner(userId, folderId);
+    const parentId = await findParentFolder(folderId);
     const fileUrls = await findAllDescendantFiles(folderId);
     await Promise.all(
       fileUrls.map((fileUrl) => {
