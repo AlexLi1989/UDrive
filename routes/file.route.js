@@ -2,6 +2,13 @@ import { Router } from "express";
 const fileRouter = Router();
 import fileController from "../controllers/file.controller.js";
 
+//multer
+import multer from "multer";
+const upload = multer({
+  storage: multer.memoryStorage(), //store in memory instead of disk storage
+  limits: { fileSize: 1024 * 1024 * 5 }, //each file 5mb max
+});
+
 //regex to check for id that fits UUID
 fileRouter.param("id", (req, res, next, id) => {
   const uuidRegex =
@@ -15,5 +22,12 @@ fileRouter.param("id", (req, res, next, id) => {
 });
 
 fileRouter.get("/:id", fileController.fileGet);
+fileRouter.post(
+  "/upload",
+  upload.single("file"),
+  fileController.fileCreatePost,
+);
+fileRouter.post("/:id/update", fileController.fileUpdatePost);
+fileRouter.post("/:id/delete", fileController.fileDeletePost);
 
 export default fileRouter;
