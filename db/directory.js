@@ -5,7 +5,6 @@ async function getRootContents(userId) {
     prisma.folder.findMany({ where: { userId, parentId: null } }),
     prisma.file.findMany({ where: { userId, folderId: null } }),
   ]);
-
   return { rootFolders, rootFiles };
 }
 
@@ -164,6 +163,14 @@ async function deleteFolder(folderId) {
   }
 }
 
+async function findAllFolders(userId) {
+  const allFolders = await prisma.folder.findMany({
+    where: { userId },
+  });
+
+  return allFolders;
+}
+
 export {
   getRootContents,
   verifyFolderOwner,
@@ -174,4 +181,5 @@ export {
   findParentFolder,
   findAllDescendantFiles,
   deleteFolder,
+  findAllFolders,
 };

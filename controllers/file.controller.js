@@ -1,9 +1,9 @@
 import { matchedData } from "express-validator";
 import {
+  getRootContents,
   verifyFolderOwner,
   getFolderBreadcrumbs,
   getFolderContents,
-  getRootContents,
   findAllFolders,
 } from "../db/directory.js";
 import {
