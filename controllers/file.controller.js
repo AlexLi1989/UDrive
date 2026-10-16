@@ -169,7 +169,7 @@ async function fileDeletePost(req, res, next) {
     const file = await verifyFileOwner(userId, fileId);
     const folderId = file.folderId;
     await deleteCloudinaryFile(file.url);
-    await deleteFile(userId, fileId);
+    await deleteFile(fileId);
     return folderId ? res.redirect(`/folders/${folderId}`) : res.redirect("/");
   } catch (error) {
     return next(error);
