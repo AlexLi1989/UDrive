@@ -182,12 +182,14 @@ Since **UDrive** uses **EJS** for Server-Side Rendering (SSR), page navigation a
 
 ### File Management (`/files`)
 
-| Method | Endpoint            | Access        | Description                                                                                             |
-| :----- | :------------------ | :------------ | :------------------------------------------------------------------------------------------------------ |
-| `GET`  | `/files/:id`        | Auth          | **File Inspector.** Renders detail modal for viewing file details.                                      |
-| `POST` | `/files/upload`     | Multer + Auth | Validates 50MB cap / 5MB single file check. Commits metadata via Prisma and pipes binary to Cloudinary. |
-| `POST` | `/files/:id/update` | Auth          | Modifies active file parameters (renaming or altering `folderId` path placement).                       |
-| `POST` | `/files/:id/delete` | Auth          | Purges file record from database and destroys physical object in Cloudinary.                            |
+| Method | Endpoint              | Access        | Description                                                                                             |
+| :----- | :-------------------- | :------------ | :------------------------------------------------------------------------------------------------------ |
+| `GET`  | `/files/:id`          | Auth          | **File Inspector.** Renders detail modal for viewing file details.                                      |
+| `POST` | `/files/upload`       | Multer + Auth | Validates 50MB cap / 5MB single file check. Commits metadata via Prisma and pipes binary to Cloudinary. |
+| `GET`  | `/files/:id/download` | Auth          | Validates ownership and streams binary payload via backend.                                             |
+| `GET`  | `/files/:id/update`   | Auth          | Returns current file metadata as JSON to pre-populate editing form modals.                              |
+| `POST` | `/files/:id/update`   | Auth          | Modifies active file parameters (renaming or altering `folderId` path placement).                       |
+| `POST` | `/files/:id/delete`   | Auth          | Purges file record from database and destroys physical object in Cloudinary.                            |
 
 ### Dashboard & File Management (`/`)
 

@@ -1,6 +1,8 @@
 import { Router } from "express";
 const fileRouter = Router();
 import fileController from "../controllers/file.controller.js";
+import validateFileUpdate from "../validators/validateFileUpdate.js";
+import handleValidationErrors from "../middlewares/handleValidationErrors.js";
 
 //multer
 import multer from "multer";
@@ -27,7 +29,14 @@ fileRouter.post(
   upload.single("file"),
   fileController.fileCreatePost,
 );
-fileRouter.post("/:id/update", fileController.fileUpdatePost);
+fileRouter.get("/:id/download", fileController.fileDownloadGet);
+fileRouter.get("/:id/update", fileController.fileUpdateGet);
+fileRouter.post(
+  "/:id/update",
+  validateFileUpdate,
+  handleValidationErrors,
+  fileController.fileUpdatePost,
+);
 fileRouter.post("/:id/delete", fileController.fileDeletePost);
 
 export default fileRouter;
