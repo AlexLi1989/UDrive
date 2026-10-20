@@ -1,0 +1,22 @@
+<nav>
+
+  <div class="logo-container">
+    <a href="/"><img src="/assets/udrive-logo.svg" alt="logo" /></a>
+  </div>
+
+  <% if(!locals.currentUser) { %>
+  <div class="not-logged-nav-links">
+    <a href="/auth/signup">Sign Up</a>
+    <a href="/auth/login">Log In</a>
+  </div>
+  <% } %>
+
+  <% if(locals.currentUser) { %>
+  <div class="logged-nav-links">
+    <form action="/auth/logout" method="POST">
+      <button type="submit">Log Out</button>
+    </form>
+  </div>
+  <% } %>
+
+</nav>

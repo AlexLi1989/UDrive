@@ -14,6 +14,8 @@ folderRouter.param("id", (req, res, next, id) => {
     error.status = 404;
     return next(error);
   }
+  //register current folder id at locals
+  res.locals.CURRENT_FOLDER_ID = id;
   next();
 });
 

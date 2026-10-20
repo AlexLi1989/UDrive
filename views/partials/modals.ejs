@@ -1,0 +1,31 @@
+<dialog id="createFolderModal" class="modal-box">
+  <div class="modal-content">
+    <h2>Create New Folder</h2>
+
+    <% if(locals.OPEN_CREATE_MODAL) {%>
+      <%- include("errors")%>
+    <% } %>
+
+    <form action="/folders" method="POST">
+      <input type="hidden" name="parentId" value="<%= locals.CURRENT_FOLDER_ID || '' %>"/>
+
+      <div class="form-group">
+        <label for="createFolderName">Folder Name: </label>
+        <input type="text" class="form-control" id="createFolderName" name="name" value="<%= locals.LASTPARAMS?.name || '' %>" required />
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-confirm">Create</button>
+        <button type="button" class="btn btn-close" onclick="closeModal('createFolderModal')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    <% if (locals.OPEN_CREATE_MODAL) { %>
+      document.getElementById('createFolderModal').showModal();
+    <% } %>
+  });
+</script>
