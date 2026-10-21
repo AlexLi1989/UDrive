@@ -2,10 +2,6 @@
   <div class="modal-content">
     <h2>Create New Folder</h2>
 
-    <% if(locals.OPEN_CREATE_MODAL) {%>
-      <%- include("errors")%>
-    <% } %>
-
     <form action="/folders" method="POST">
       <input type="hidden" name="parentId" value="<%= locals.CURRENT_FOLDER_ID || '' %>"/>
 
@@ -13,6 +9,10 @@
         <label for="createFolderName">Folder Name: </label>
         <input type="text" class="form-control" id="createFolderName" name="name" value="<%= locals.LASTPARAMS?.name || '' %>" required />
       </div>
+
+      <% if(locals.OPEN_CREATE_MODAL) {%>
+        <%- include("errors")%>
+      <% } %>
 
       <div class="modal-actions">
         <button type="submit" class="btn btn-confirm">Create</button>
@@ -22,10 +22,121 @@
   </div>
 </dialog>
 
+<dialog id="editFolderModal" class="modal-box">
+  <div class="modal-content">
+    <h2>Rename Folder</h2>
+
+    <form id="editFolderForm" action="" method="POST">
+      <div class="form-group">
+        <label for="editFolderName">New Name: </label>
+        <input type="text" class="form-control" id="editFolderName" name="name" value="<%= locals.LASTPARAMS?.name || '' %>" required autocomplete="off" />
+      </div>
+
+      <% if(locals.OPEN_FOLDER_UPDATE_MODAL) {%>
+        <%- include("errors")%>
+      <% } %>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-confirm">Rename</button>
+        <button type="button" class="btn btn-close" onclick="closeModal('editFolderModal')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="deleteFolderModal" class="modal-box">
+  <div class="modal-content">
+    <h2>Delete Folder</h2>
+
+    <form id="deleteFolderForm" action="" method="POST">
+      <div class="form-group">
+        <h3>Are you sure you want to delete this folder?</h3>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <button type="button" class="btn btn-close" onclick="closeModal('deleteFolderModal')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="editFileModal" class="modal-box">
+  <div class="modal-content">
+    <h2>Edit File</h2>
+
+    <form id="editFileForm" action="" method="POST">
+      <div class="form-group">
+        <label for="editFileName">Rename File:</label>
+        <input type="text" class="form-control" id="editFileName" name="name" value="<%= locals.LASTPARAMS?.name || '' %>" required autocomplete="off">
+      </div>
+
+      <% if (locals.OPEN_FILE_UPDATE_MODAL) { %>
+        <%- include("errors") %>
+      <% } %>
+
+      <div class="form-group">
+        <label for="editFileFolderId">Move To:</label>
+        <select id="editFileFolderId" class="form-control" name="folderId">
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-confirm">Save Changes</button>
+        <button type="button" class="btn btn-close" onclick="closeModal('editFileModal')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="deleteFileModal" class="modal-box">
+  <div class="modal-content">
+    <h2>Delete File</h2>
+
+    <form id="deleteFileForm" action="" method="POST">
+      <div class="form-group">
+        <h3>Are you sure you want to delete this file?</h3>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <button type="button" class="btn btn-close" onclick="closeModal('deleteFileModal')">Cancel</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="fileDetailModal" class="modal-box">
+  <div class="modal-content">
+    <h2>File Information</h2>
+
+    <div class="File-Details">
+      <p><strong>Name:</strong> <span id="File-Name">Loading...</span></p>
+      <p><strong>Size:</strong> <span id="File-Size">Loading...</span></p>
+      <p><strong>Created At:</strong> <span id="File-Date">Loading...</span></p>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn btn-close" onclick="closeModal('fileDetailModal')">Close</button>
+    </div>
+  </div>
+</dialog>
+
 <script>
   window.addEventListener('DOMContentLoaded', () => {
     <% if (locals.OPEN_CREATE_MODAL) { %>
       document.getElementById('createFolderModal').showModal();
+    <% } %>
+
+    <% if (locals.OPEN_FOLDER_UPDATE_MODAL && locals.CURRENT_FOLDER_ID) { %>
+      document.getElementById('editFolderForm').action = '/folders/<%= locals.CURRENT_FOLDER_ID %>/update';
+      document.getElementById('editFolderModal').showModal();
+    <% } %>
+
+    <% if (locals.OPEN_FILE_UPDATE_MODAL && locals.LAST_FAILED_FILE_ID) { %>
+      document.getElementById('editFileForm').action = '/files/<%= locals.LAST_FAILED_FILE_ID %>/update';
+      fillFileUpdateModal('<%= locals.LAST_FAILED_FILE_ID %>');
+      document.getElementById('editFileModal').showModal();
     <% } %>
   });
 </script>

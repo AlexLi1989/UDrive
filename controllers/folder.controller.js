@@ -107,14 +107,14 @@ async function folderUpdatePost(req, res, next) {
   const { name } = matchedData(req);
   try {
     await verifyFolderOwner(userId, folderId);
-    const parentId = await findParentFolder(userId, folderId);
+    const parentId = await findParentFolder(folderId);
     if (req.validationErrors) {
       const totalUsage = await calcTotalUsage(userId);
       //update at non root level
       if (parentId) {
         const [breadcrumbs, { folders, files }] = await Promise.all([
           //breadcrumbs
-          getFolderBreadcrumbs(parentId),
+          getFolderBreadcrumbs(parentId, userId),
           //fetch folders and files under parent folder
           getFolderContents(parentId),
         ]);
@@ -128,7 +128,8 @@ async function folderUpdatePost(req, res, next) {
           TOTAL_USAGE: totalUsage,
           ERRORS: req.validationErrors,
           LASTPARAMS: req.body,
-          OPEN_UPDATE_MODAL: true,
+          CURRENT_FOLDER_ID: folderId,
+          OPEN_FOLDER_UPDATE_MODAL: true,
         });
         //update at root level
       } else {
@@ -144,7 +145,8 @@ async function folderUpdatePost(req, res, next) {
           TOTAL_USAGE: totalUsage,
           ERRORS: req.validationErrors,
           LASTPARAMS: req.body,
-          OPEN_UPDATE_MODAL: true,
+          CURRENT_FOLDER_ID: folderId,
+          OPEN_FOLDER_UPDATE_MODAL: true,
         });
       }
     }

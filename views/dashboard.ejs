@@ -45,27 +45,34 @@
           <% } %>
         </div>
 
-        <div class="grid-layout">
-          <% FILES.forEach(function(file) { %>
-            <div class="card file-card">
-              <div class="card-body-click" onclick="openFileInspector('<%= file.id %>')">
-                <span class="main-icon">📄</span>
-                <span class="name"><%= file.name %></span>
-              </div>
+        <div class="resource-block">
+          <h3>Files</h3>
+          <% if (FILES.length === 0) { %>
+            <p class="empty-text">No files uploaded yet.</p>
+          <% } else { %>
+            <div class="grid-layout">
+              <% FILES.forEach(function(file) { %>
+                <div class="card file-card">
+                  <div class="card-body-click" onclick="triggerDownloadFile('<%= file.id %>')">
+                    <span class="main-icon">📄</span>
+                    <span class="name"><%= file.name %></span>
+                  </div>
 
-              <div class="card-actions-toolbar-triple">
-                <button class="action-btn" onclick="triggerEditFileModal('<%= file.id %>')">
-                  <img src="/assets/edit-icon.png" alt="edit" />
-                </button>
-                <button class="action-btn" onclick="triggerDownloadFile('<%= file.id %>')">
-                  <img src="/assets/download-icon.png" alt="download" />
-                </button>
-                <button class="action-btn" onclick="triggerDeleteFileModal('<%= file.id %>')">
-                  <img src="/assets/delete-icon.png" alt="delete" />
-                </button>
-              </div>
+                  <div class="card-actions-toolbar-triple">
+                    <button class="action-btn" onclick="triggerEditFileModal('<%= file.id %>')">
+                      <img src="/assets/edit-icon.png" alt="edit" />
+                    </button>
+                    <button class="action-btn" onclick="triggerFileDetailModal('<%= file.id %>')">
+                      <img src="/assets/detail-icon.png" alt="detail" />
+                    </button>
+                    <button class="action-btn" onclick="triggerDeleteFileModal('<%= file.id %>')">
+                      <img src="/assets/delete-icon.png" alt="delete" />
+                    </button>
+                  </div>
+                </div>
+              <% }); %>
             </div>
-          <% }); %>
+          <% } %>
         </div>
       </section>
 
@@ -81,16 +88,23 @@
         <form id="autoUploadForm" action="/files/upload" method="POST" enctype="multipart/form-data" style="display: none;">
 
         <input type="hidden" name="folderId" value="<%= locals.CURRENT_FOLDER_ID || '' %>">
+
+        <input type="hidden" name="name" id="hiddenFileNameInput">
+
         <input
         type="file"
         id="hiddenFileInput"
         name="file"
-        onchange="document.getElementById('autoUploadForm').submit()"
+        onchange="handleAutoUpload()"
         >
         </form>
       </section>
     </main>
 
+    <%- include("partials/modals") %>
+
     <%- include("partials/footer") %>
+
+    <script src="/js/drive.js"></script>
   </body>
 </html>

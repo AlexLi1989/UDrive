@@ -41,6 +41,9 @@ async function fileCreatePost(req, res, next) {
   const fileName = req.body.name;
   const folderId = req.body.folderId;
   try {
+    if (!req.file) {
+      return res.status(400).send("File is required");
+    }
     if (folderId) {
       await verifyFolderOwner(userId, folderId);
     }
@@ -82,24 +85,21 @@ async function fileCreatePost(req, res, next) {
         });
       }
     }
-    if (req.file) {
-      const uploadResult = await uploadCloudinaryFile(req.file);
-      const fileUrl = uploadResult.secure_url;
-      const mimeType = req.file.mimetype;
 
-      await insertFile(
-        fileName,
-        fileUrl,
-        req.file.size,
-        mimeType,
-        userId,
-        folderId || null,
-      );
+    const uploadResult = await uploadCloudinaryFile(req.file);
+    const fileUrl = uploadResult.secure_url;
+    const mimeType = req.file.mimetype;
 
-      return folderId
-        ? res.redirect(`/folders/${folderId}`)
-        : res.redirect("/");
-    }
+    await insertFile(
+      fileName,
+      fileUrl,
+      req.file.size,
+      mimeType,
+      userId,
+      folderId || null,
+    );
+
+    return folderId ? res.redirect(`/folders/${folderId}`) : res.redirect("/");
   } catch (error) {
     return next(error);
   }
@@ -152,6 +152,45 @@ async function fileUpdatePost(req, res, next) {
   const { name, folderId } = matchedData(req);
   try {
     const file = await verifyFileOwner(userId, fileId);
+    if (req.validationErrors) {
+      const totalUsage = await calcTotalUsage(userId);
+
+      if (file.folderId) {
+        const [breadcrumbs, folderContent] = await Promise.all([
+          getFolderBreadcrumbs(file.folderId, userId),
+          getFolderContents(file.folderId),
+        ]);
+        const { folders, files } = folderContent;
+        const currentFolderName =
+          breadcrumbs[breadcrumbs.length - 1]?.name || "Folder";
+
+        return res.status(400).render("folder", {
+          TITLE: `UDrive - ${currentFolderName}`,
+          BREADCRUMBS: breadcrumbs,
+          FOLDERS: folders,
+          FILES: files,
+          TOTAL_USAGE: totalUsage,
+          ERRORS: req.validationErrors,
+          LASTPARAMS: req.body,
+          LAST_FAILED_FILE_ID: fileId,
+          OPEN_FILE_UPDATE_MODAL: true,
+        });
+      } else {
+        const [rootContent] = await Promise.all([getRootContents(userId)]);
+        const { rootFolders, rootFiles } = rootContent;
+
+        return res.status(400).render("dashboard", {
+          TITLE: "Welcome to UDrive",
+          FOLDERS: rootFolders,
+          FILES: rootFiles,
+          TOTAL_USAGE: totalUsage,
+          ERRORS: req.validationErrors,
+          LASTPARAMS: req.body,
+          LAST_FAILED_FILE_ID: fileId,
+          OPEN_FILE_UPDATE_MODAL: true,
+        });
+      }
+    }
     if (folderId) {
       await verifyFolderOwner(userId, folderId);
     }

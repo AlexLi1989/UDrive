@@ -5,12 +5,12 @@ const handleValidationErrors = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       req.validationErrors = errors.array();
-      req.lastParams = req.body;
+      req.LASTPARAMS = req.body;
       return next();
     }
+    return next();
   } catch (error) {
-    next(error);
+    return next(error);
   }
-  return next();
 };
 export default handleValidationErrors;
