@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head") %>
+  <body>
+    <%- include("partials/nav") %>
+
+    <main class="container">
+
+      <section class="storage-section">
+        <div class="storage-info">
+          <span>Storage Usage: <strong><%= Number(TOTAL_USAGE).toFixed(2) %> MB</strong> / 50.00 MB</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" style="width: <%= (TOTAL_USAGE / 50) * 100 %>%;"></div>
+        </div>
+      </section>
+
+      <section class="explorer-section">
+        <h2><%= locals.currentUser.name %>'s Drive (Root)</h2>
+
+        <div class="resource-block">
+          <h3>Folders</h3>
+          <% if (FOLDERS.length === 0) { %>
+            <p class="empty-text">No folders created yet.</p>
+          <% } else { %>
+            <div class="grid-layout">
+              <% FOLDERS.forEach(function(folder) { %>
+                <div class="card folder-card">
+                  <div class="card-body-click" onclick="window.location.href='/folders/<%= folder.id %>'">
+                    <span class="main-icon">📁</span>
+                    <span class="name"><%= folder.name %></span>
+                  </div>
+
+                  <div class="card-actions-toolbar">
+                    <button class="action-btn" onclick="triggerEditFolderModal('<%= folder.id %>', '<%= folder.name %>')">
+                      <img src="/assets/edit-icon.png" alt="edit" />
+                    </button>
+                    <button class="action-btn" onclick="triggerDeleteFolderModal('<%= folder.id %>')">
+                      <img src="/assets/delete-icon.png" alt="delete" />
+                    </button>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="resource-block">
+          <h3>Files</h3>
+          <% if (FILES.length === 0) { %>
+            <p class="empty-text">No files uploaded yet.</p>
+          <% } else { %>
+            <div class="grid-layout">
+              <% FILES.forEach(function(file) { %>
+                <div class="card file-card">
+                  <div class="card-body-click" onclick="triggerDownloadFile('<%= file.id %>')">
+                    <span class="main-icon">📄</span>
+                    <span class="name"><%= file.name %></span>
+                  </div>
+
+                  <div class="card-actions-toolbar-triple">
+                    <button class="action-btn" onclick="triggerEditFileModal('<%= file.id %>')">
+                      <img src="/assets/edit-icon.png" alt="edit" />
+                    </button>
+                    <button class="action-btn" onclick="triggerFileDetailModal('<%= file.id %>')">
+                      <img src="/assets/detail-icon.png" alt="detail" />
+                    </button>
+                    <button class="action-btn" onclick="triggerDeleteFileModal('<%= file.id %>')">
+                      <img src="/assets/delete-icon.png" alt="delete" />
+                    </button>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+      </section>
+
+      <section class="action-toolbar">
+        <button class="btn btn-action" onclick="triggerCreateFolderModal()">
+          <span class="btn-icon">➕</span> New Folder
+        </button>
+
+        <button class="btn btn-action" onclick="document.getElementById('hiddenFileInput').click()">
+        <span class="btn-icon">📤</span> Upload File
+        </button>
+
+        <form id="autoUploadForm" action="/files/upload" method="POST" enctype="multipart/form-data" style="display: none;">
+
+        <input type="hidden" name="folderId" value="<%= locals.CURRENT_FOLDER_ID || '' %>">
+
+        <input type="hidden" name="name" id="hiddenFileNameInput">
+
+        <input
+        type="file"
+        id="hiddenFileInput"
+        name="file"
+        onchange="handleAutoUpload()"
+        >
+        </form>
+      </section>
+    </main>
+
+    <%- include("partials/modals") %>
+
+    <%- include("partials/footer") %>
+
+    <script src="/js/drive.js"></script>
+  </body>
+</html>
