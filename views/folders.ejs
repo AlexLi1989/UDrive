@@ -16,7 +16,21 @@
       </section>
 
       <section class="explorer-section">
-        <h2><%= locals.currentUser.name %>'s Drive (Root)</h2>
+        <nav class="breadcrumbs-nav">
+          <a href="/">My Drive</a>
+
+          <%if(locals.BREADCRUMBS && BREADCRUMBS.length > 0) { %>
+            <span class="breadcrumbs-separator">/</span>
+            <% BREADCRUMBS.forEach(function(crumb,index) { %>
+              <% if(index === BREADCRUMBS.length - 1) { %>
+                <span class="breadcrumbs-last"><%= crumb.name %></span>
+              <% } else { %>
+                <a href="/folders/<%= crumb.id %>"><%= crumb.name %></a>
+                <span class="breadcrumbs-separator">/</span>
+              <% } %>
+            <% });%>
+          <%}%>
+        </nav>
 
         <div class="resource-block">
           <h3>Folders</h3>
