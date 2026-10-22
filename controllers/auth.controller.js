@@ -56,4 +56,4 @@ function userLogoutPost(req, res, next) {
   });
 }
 
-export { userCreateGet, userCreatePost, userLoginGet, userLogoutPost };
+export default { userCreateGet, userCreatePost, userLoginGet, userLogoutPost };

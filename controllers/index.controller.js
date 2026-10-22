@@ -29,4 +29,4 @@ async function indexGet(req, res, next) {
   }
 }
 
-export { indexGet };
+export default { indexGet };

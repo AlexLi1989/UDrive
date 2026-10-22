@@ -177,4 +177,9 @@ async function folderDeletePost(req, res, next) {
   }
 }
 
-export { folderGet, folderCreatePost, folderUpdatePost, folderDeletePost };
+export default {
+  folderGet,
+  folderCreatePost,
+  folderUpdatePost,
+  folderDeletePost,
+};

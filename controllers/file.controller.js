@@ -215,7 +215,7 @@ async function fileDeletePost(req, res, next) {
   }
 }
 
-export {
+export default {
   fileGet,
   fileCreatePost,
   fileDownloadGet,

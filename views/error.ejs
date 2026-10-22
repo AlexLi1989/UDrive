@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head") %>
+  <body>
+    <%- include("partials/nav") %>
+    <main class="error-page-container">
+      <h1 class="error-header"><%= HEADER %></h1>
+      <p class="error-desc"><%= MESSAGE %></p>
+      <div class="error-action">
+          <a href="/" class="error-btn">Home</a>
+      </div>
+    </main>
+    <%- include("partials/footer") %>
+  </body>
+</html>
