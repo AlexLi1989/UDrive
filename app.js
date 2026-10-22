@@ -30,6 +30,7 @@ app.set("trust proxy", 1);
 app.use(prismaSessionConfig);
 
 //passport config
+app.use(passport.initialize());
 app.use(passport.session());
 
 //setting global current user
@@ -38,9 +39,8 @@ app.use(userContext);
 //routes
 app.use("/auth", authRouter);
 app.use("/", indexRouter);
-app.use(ensureAuthenticated);
-app.use("/folders", folderRouter);
-app.use("/files", fileRouter);
+app.use("/folders", ensureAuthenticated, folderRouter);
+app.use("/files", ensureAuthenticated, fileRouter);
 
 //404 route
 app.use(notFoundHandler);
