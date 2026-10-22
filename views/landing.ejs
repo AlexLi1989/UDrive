@@ -3,67 +3,64 @@
   <%- include("partials/head") %>
   <body>
     <%- include("partials/nav") %>
-
-    <main>
-      <div class="hero">
-        <div class="hero-content">
-          <h1>Safe. Swift. Seamless.</h1>
+    <main class="landing-page">
+      <section class="hero" aria-labelledby="heroHeading">
+        <div class="hero__content">
+          <h1 id="heroHeading">Safe. Swift. Seamless.</h1>
           <p>Your ultimate personal cloud drive. Access your folders and manage your files securely from anywhere, at any time.</p>
           <% if (!locals.currentUser) { %>
-            <div class="hero-buttons">
-              <a href="/auth/signup" class="btn btn-primary">Create Free Account</a>
-              <a href="/auth/login" class="btn btn-secondary">Log In</a>
+            <div class="hero__actions">
+              <a href="/auth/signup" class="button button--primary">Create Free Account</a>
+              <a href="/auth/login" class="button button--secondary">Log In</a>
             </div>
           <% } else { %>
-            <div class="hero-buttons">
-              <a href="/" class="btn btn-success">Go to My Dashboard →</a>
+            <div class="hero__actions">
+              <a href="/" class="button button--success">Go to My Dashboard →</a>
             </div>
           <% } %>
         </div>
-      </div>
+      </section>
 
-      <div class="product-container">
-        <h2 class="section-title">Everything You Need. Nothing You Don't.</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">📁</div>
-            <h3>Nested Folders</h3>
-            <p>Create, rename, and  organize your folders easily.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">⚡</div>
-            <h3>50MB Smart Cap</h3>
-            <p>Real-time storage tracking guards your quota before network consumption.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>Zero-Disk Stream</h3>
-            <p>Lightning-fast 5MB uploads powered by memory storage—no server clutter.</p>
-          </div>
-
-          <div class="feature-card">
-            <div class="feature-icon">🛡️</div>
-            <h3>Privacy Locked</h3>
-            <p>Bulletproof BOLA protection with strict ownership binding on every single file.</p>
+      <section class="features-section" aria-labelledby="featuresHeading">
+        <div class="features-section__inner">
+          <h2 class="features-section__heading" id="featuresHeading">Everything You Need. Nothing You Don't.</h2>
+          <div class="features-grid">
+            <article class="feature-card">
+              <div class="feature-card__icon" aria-hidden="true">📁</div>
+              <h3>Nested Folders</h3>
+              <p>Create, rename, and organize your folders easily.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon" aria-hidden="true">⚡</div>
+              <h3>50MB Smart Cap</h3>
+              <p>Real-time storage tracking guards your quota before network consumption.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon" aria-hidden="true">🔒</div>
+              <h3>Zero-Disk Stream</h3>
+              <p>Lightning-fast 5MB uploads powered by memory storage—no server clutter.</p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-card__icon" aria-hidden="true">🛡️</div>
+              <h3>Privacy Locked</h3>
+              <p>Bulletproof BOLA protection with strict ownership binding on every single file.</p>
+            </article>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="cta-container">
+      <section class="callout" aria-labelledby="calloutHeading">
         <% if (!locals.currentUser) { %>
-          <h2>Ready to revolutionize your file management?</h2>
+          <h2 id="calloutHeading">Ready to revolutionize your file management?</h2>
           <p>Join UDrive today and experience secure, lightning-fast cloud storage.</p>
-          <a href="/auth/signup" class="btn btn-cta">Get Started For Free</a>
+          <a href="/auth/signup" class="button button--callout">Get Started For Free</a>
         <% } else { %>
-          <h2>Keep pushing boundaries.</h2>
+          <h2 id="calloutHeading">Keep pushing boundaries.</h2>
           <p>Your workspace is live and secure. Continue managing your files now.</p>
-          <a href="/" class="btn btn-cta">Back to Workspace</a>
+          <a href="/" class="button button--callout">Back to Workspace</a>
         <% } %>
-      </div>
+      </section>
     </main>
-
     <%- include("partials/footer") %>
   </body>
 </html>

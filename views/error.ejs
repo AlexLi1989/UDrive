@@ -3,12 +3,14 @@
   <%- include("partials/head") %>
   <body>
     <%- include("partials/nav") %>
-    <main class="error-page-container">
-      <h1 class="error-header"><%= HEADER %></h1>
-      <p class="error-desc"><%= MESSAGE %></p>
-      <div class="error-action">
-          <a href="/" class="error-btn">Home</a>
-      </div>
+    <main class="error-page">
+      <section class="error-page__content" aria-labelledby="errorHeading">
+        <h1 class="error-page__heading" id="errorHeading"><%= HEADER %></h1>
+        <p class="error-page__description"><%= MESSAGE %></p>
+        <div class="error-page__actions">
+          <a href="/" class="button button--primary">Home</a>
+        </div>
+      </section>
     </main>
     <%- include("partials/footer") %>
   </body>

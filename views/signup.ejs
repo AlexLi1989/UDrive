@@ -3,43 +3,38 @@
   <%- include("partials/head") %>
   <body>
     <%- include("partials/nav") %>
-    <main>
-      <div class="signup-container">
-        <h2>Sign Up</h2>
+    <main class="auth-page">
+      <section class="auth-card" aria-labelledby="signupHeading">
+        <h1 class="auth-card__heading" id="signupHeading">Sign Up</h1>
         <form action="/auth/signup" method="post">
-
-          <div class="form-group">
-            <label for="userName">User Name: </label>
-            <input type="text" class="form-control" id="userName" name="username" value="<%- locals.LASTPARAMS?.username || "" %>" required>
+          <div class="form-field">
+            <label for="userName">User Name:</label>
+            <input type="text" class="form-control" id="userName" name="username" value="<%= locals.LASTPARAMS?.username || '' %>" required>
           </div>
-
-          <div class="form-group">
-            <label for="email">Email: </label>
-            <input type="text" class="form-control" id="email" name="email" value="<%- locals.LASTPARAMS?.email || "" %>" required>
+          <div class="form-field">
+            <label for="email">Email:</label>
+            <input type="text" class="form-control" id="email" name="email" value="<%= locals.LASTPARAMS?.email || '' %>" required>
           </div>
-
-          <div class="form-group password-wrapper">
-            <label for="password">Password: </label>
+          <div class="form-field password-wrapper">
+            <label for="password">Password:</label>
             <div class="input-with-eye-icon">
               <input type="password" class="form-control" id="password" name="password" required>
               <button type="button" class="toggle-password-btn">👁️</button>
             </div>
           </div>
-
-          <div class="form-group password-wrapper">
-            <label for="confirmPassword">Confirm Password: </label>
+          <div class="form-field password-wrapper">
+            <label for="confirmPassword">Confirm Password:</label>
             <div class="input-with-eye-icon">
               <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
               <button type="button" class="toggle-password-btn">👁️</button>
             </div>
           </div>
-
-          <button type="submit">Sign Up</button>
+          <button class="button button--primary auth-card__submit" type="submit">Sign Up</button>
         </form>
         <%- include("partials/errors") %>
-      </div>
+      </section>
     </main>
     <%- include("partials/footer") %>
+    <script src="/js/togglePassword.js" defer></script>
   </body>
-  <script src="/js/togglePassword.js" defer></script>
 </html>
