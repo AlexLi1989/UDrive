@@ -44,8 +44,13 @@ async function userCreatePost(req, res, next) {
 
 //login get
 function userLoginGet(req, res, next) {
-  res.render("login", {
+  const messages = req.session.messages || [];
+
+  req.session.messages = [];
+
+  return res.render("login", {
     TITLE: "UDrive - Log In",
+    ERRORS: messages.length ? [{ msg: messages[0] }] : null,
   });
 }
 
