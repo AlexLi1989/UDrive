@@ -15,7 +15,10 @@ async function userCreatePost(req, res, next) {
       return res.status(400).render("signup", {
         TITLE: "UDrive - Sign Up",
         ERRORS: req.validationErrors,
-        LASTPARAMS: req.lastParams,
+        LASTPARAMS: {
+          username: req.body.username ?? "",
+          email: req.body.email ?? "",
+        },
       });
     }
     const { email, password, username } = matchedData(req);

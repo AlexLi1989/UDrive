@@ -9,23 +9,23 @@
         <form action="/auth/signup" method="post">
           <div class="form-field">
             <label for="userName">User Name:</label>
-            <input type="text" class="form-control" id="userName" name="username" value="<%= locals.LASTPARAMS?.username || '' %>" required>
+            <input type="text" id="userName" class="form-control" name="username" value="<%= locals.LASTPARAMS?.username || '' %>" autocomplete="username" required >
           </div>
           <div class="form-field">
             <label for="email">Email:</label>
-            <input type="text" class="form-control" id="email" name="email" value="<%= locals.LASTPARAMS?.email || '' %>" required>
+            <input type="email" id="email" name="email" class="form-control" value="<%= locals.LASTPARAMS?.email || '' %>" autocomplete="email" required >
           </div>
           <div class="form-field password-wrapper">
             <label for="password">Password:</label>
             <div class="input-with-eye-icon">
-              <input type="password" class="form-control" id="password" name="password" required>
+              <input type="password" class="form-control" id="password" name="password" autocomplete="new-password" required>
               <button type="button" class="toggle-password-btn">👁️</button>
             </div>
           </div>
           <div class="form-field password-wrapper">
             <label for="confirmPassword">Confirm Password:</label>
             <div class="input-with-eye-icon">
-              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" autocomplete="new-password" required>
               <button type="button" class="toggle-password-btn">👁️</button>
             </div>
           </div>

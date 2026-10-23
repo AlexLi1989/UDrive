@@ -5,14 +5,14 @@ const validateUser = [
   body("username")
     .trim()
     .isLength({ min: 1, max: 50 })
-    .withMessage("Must be between 1 and 50 characters.")
+    .withMessage("Username must be between 1 and 50 characters.")
     .escape(),
   body("email")
     .trim()
     .isEmail()
     .withMessage("Must be a valid email.")
     .isLength({ max: 254 })
-    .withMessage("Must be less than 254 characters.")
+    .withMessage("Email must be less than 254 characters.")
     .custom(async (value) => {
       const isNotUnique = await findUserEmail({ email: value });
       if (isNotUnique) {
@@ -25,15 +25,15 @@ const validateUser = [
   body("password")
     .trim()
     .isLength({ min: 8, max: 72 })
-    .withMessage("Must be between 8 and 72 characters.")
+    .withMessage("Password must be between 8 and 72 characters.")
     .matches(/[A-Z]/)
-    .withMessage("Must contain at least one uppercase letter.")
+    .withMessage("Password must contain at least one uppercase letter.")
     .matches(/[a-z]/)
-    .withMessage("Must contain at least one lowercase letter.")
+    .withMessage("Password must contain at least one lowercase letter.")
     .matches(/\d/)
-    .withMessage("Must contain at least one digit.")
+    .withMessage("Password must contain at least one digit.")
     .matches(/[!@#$%^&*(),.?":{}|<>_+=-]/)
-    .withMessage("Must contain at least one special character."),
+    .withMessage("Password must contain at least one special character."),
   body("confirmPassword")
     .trim()
     .custom((value, { req }) => {
