@@ -59,7 +59,7 @@ async function fileCreatePost(req, res, next) {
         ]);
         const currentFolderName =
           breadcrumbs[breadcrumbs.length - 1]?.name || "Folder";
-        return res.status(400).render("folder", {
+        return res.status(400).render("folders", {
           TITLE: `UDrive - ${currentFolderName}`,
           BREADCRUMBS: breadcrumbs,
           FOLDERS: folders,
@@ -164,7 +164,7 @@ async function fileUpdatePost(req, res, next) {
         const currentFolderName =
           breadcrumbs[breadcrumbs.length - 1]?.name || "Folder";
 
-        return res.status(400).render("folder", {
+        return res.status(400).render("folders", {
           TITLE: `UDrive - ${currentFolderName}`,
           BREADCRUMBS: breadcrumbs,
           FOLDERS: folders,

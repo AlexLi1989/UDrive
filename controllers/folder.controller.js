@@ -33,7 +33,7 @@ async function folderGet(req, res, next) {
     ]);
     const currentFolderName =
       breadcrumbs[breadcrumbs.length - 1]?.name || "Folder";
-    return res.render("folder", {
+    return res.render("folders", {
       TITLE: `UDrive - ${currentFolderName}`,
       BREADCRUMBS: breadcrumbs,
       FOLDERS: folders,
@@ -65,7 +65,7 @@ async function folderCreatePost(req, res, next) {
         ]);
         const currentFolderName =
           breadcrumbs[breadcrumbs.length - 1]?.name || "Folder";
-        return res.status(400).render("folder", {
+        return res.status(400).render("folders", {
           TITLE: `UDrive - ${currentFolderName}`,
           BREADCRUMBS: breadcrumbs,
           FOLDERS: folders,
@@ -120,7 +120,7 @@ async function folderUpdatePost(req, res, next) {
         ]);
         const currentFolderName =
           breadcrumbs[breadcrumbs.length - 1]?.name || "Folder";
-        return res.status(400).render("folder", {
+        return res.status(400).render("folders", {
           TITLE: `UDrive - ${currentFolderName}`,
           BREADCRUMBS: breadcrumbs,
           FOLDERS: folders,

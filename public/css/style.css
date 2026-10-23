@@ -501,6 +501,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   min-width: 0;
   min-height: 92px;
   display: flex;
+  flex-direction: column;
   align-items: stretch;
   background: #fff;
   border: 1px solid var(--border);
@@ -537,21 +538,28 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .drive-card__name {
   min-width: 0;
-  overflow: hidden;
+  flex: 1;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  word-break: normal;
   color: #344054;
   font-weight: 650;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .drive-card__actions {
-  padding: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding: 8px 12px;
   display: flex;
   align-items: center;
-  gap: 3px;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid var(--border);
 }
 
 .icon-button {
+  flex: 0 0 34px;
   width: 34px;
   height: 34px;
   padding: 7px;

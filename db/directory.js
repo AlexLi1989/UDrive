@@ -130,10 +130,10 @@ async function findAllDescendantFiles(folderId) {
   //
   const folders = await prisma.$queryRaw`
   WITH RECURSIVE folder_tree AS (
-    SELECT id, parentId FROM "Folder" WHERE id = ${folderId}
+    SELECT id, "parentId" FROM "Folder" WHERE id = ${folderId}
     UNION ALL
-    SELECT f.id, f.parentId FROM "Folder" f
-    JOIN folder_tree ft ON f.parentId = ft.id
+    SELECT f.id, f."parentId" FROM "Folder" f
+    JOIN folder_tree ft ON f."parentId" = ft.id
   )
   SELECT id FROM folder_tree;
 `;
