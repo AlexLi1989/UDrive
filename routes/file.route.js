@@ -3,13 +3,7 @@ const fileRouter = Router();
 import fileController from "../controllers/file.controller.js";
 import validateFileUpdate from "../validators/validateFileUpdate.js";
 import handleValidationErrors from "../middlewares/handleValidationErrors.js";
-
-//multer
-import multer from "multer";
-const upload = multer({
-  storage: multer.memoryStorage(), //store in memory instead of disk storage
-  limits: { fileSize: 1024 * 1024 * 5 }, //each file 5mb max
-});
+import ensureValidFile from "../middlewares/ensureValidFile.js";
 
 //regex to check for id that fits UUID
 fileRouter.param("id", (req, res, next, id) => {
@@ -24,11 +18,7 @@ fileRouter.param("id", (req, res, next, id) => {
 });
 
 fileRouter.get("/:id", fileController.fileGet);
-fileRouter.post(
-  "/upload",
-  upload.single("file"),
-  fileController.fileCreatePost,
-);
+fileRouter.post("/upload", ensureValidFile, fileController.fileCreatePost);
 fileRouter.get("/:id/download", fileController.fileDownloadGet);
 fileRouter.get("/:id/update", fileController.fileUpdateGet);
 fileRouter.post(

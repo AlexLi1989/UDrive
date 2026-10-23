@@ -104,6 +104,22 @@
   </div>
 </dialog>
 
+<dialog id="failedUploadModal" class="modal">
+  <div class="modal__content">
+    <h2>Upload Failed</h2>
+
+    <%- include("errors") %>
+
+    <div class="modal__actions">
+      <button
+        type="button"
+        class="button button--secondary"
+        onclick="closeModal('failedUploadModal')"
+      >Close</button>
+    </div>
+  </div>
+</dialog>
+
 <script>
   window.addEventListener('DOMContentLoaded', () => {
     <% if (locals.OPEN_CREATE_MODAL) { %>
@@ -119,6 +135,10 @@
       document.getElementById('editFileForm').action = '/files/<%= locals.LAST_FAILED_FILE_ID %>/update';
       fillFileUpdateModal('<%= locals.LAST_FAILED_FILE_ID %>');
       document.getElementById('editFileModal').showModal();
+    <% } %>
+
+    <% if (locals.OPEN_FAILED_UPLOAD_MODAL) { %>
+      document.getElementById('failedUploadModal').showModal();
     <% } %>
   });
 </script>

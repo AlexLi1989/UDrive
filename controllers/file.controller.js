@@ -41,6 +41,41 @@ async function fileCreatePost(req, res, next) {
   const fileName = req.body.name;
   const folderId = req.body.folderId;
   try {
+    if (req.validationErrors) {
+      const currentUsage = await calcTotalUsage(userId);
+      if (folderId) {
+        await verifyFolderOwner(userId, folderId);
+        const [breadcrumbs, folderContent] = await Promise.all([
+          getFolderBreadcrumbs(folderId, userId),
+          getFolderContents(folderId),
+        ]);
+        const { folders, files } = folderContent;
+        const currentFolderName =
+          breadcrumbs[breadcrumbs.length - 1]?.name || "Folder";
+        return res.status(400).render("folders", {
+          TITLE: `UDrive - ${currentFolderName}`,
+          BREADCRUMBS: breadcrumbs,
+          FOLDERS: folders,
+          FILES: files,
+          TOTAL_USAGE: currentUsage,
+          ERRORS: req.validationErrors,
+          OPEN_FAILED_UPLOAD_MODAL: true,
+          CURRENT_FOLDER_ID: folderId,
+        });
+      } else {
+        const [rootContent] = await Promise.all([getRootContents(userId)]);
+        const { rootFolders, rootFiles } = rootContent;
+        return res.status(400).render("dashboard", {
+          TITLE: "Welcome to UDrive",
+          FOLDERS: rootFolders,
+          FILES: rootFiles,
+          TOTAL_USAGE: currentUsage,
+          ERRORS: req.validationErrors,
+          OPEN_FAILED_UPLOAD_MODAL: true,
+        });
+      }
+    }
+
     if (!req.file) {
       return res.status(400).send("File is required");
     }
@@ -67,6 +102,7 @@ async function fileCreatePost(req, res, next) {
           TOTAL_USAGE: currentUsage,
           ERRORS: [{ msg: "Exceeded storage limit." }],
           OPEN_FAILED_UPLOAD_MODAL: true, //render modal automatically
+          CURRENT_FOLDER_ID: folderId,
         });
         //creation at root level
       } else {
@@ -174,6 +210,7 @@ async function fileUpdatePost(req, res, next) {
           LASTPARAMS: req.body,
           LAST_FAILED_FILE_ID: fileId,
           OPEN_FILE_UPDATE_MODAL: true,
+          CURRENT_FOLDER_ID: folderId,
         });
       } else {
         const [rootContent] = await Promise.all([getRootContents(userId)]);
