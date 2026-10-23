@@ -32,9 +32,9 @@ const validateUser = [
     .withMessage("Must contain at least one lowercase letter.")
     .matches(/\d/)
     .withMessage("Must contain at least one digit.")
-    .matches(/[!@#$%^&*(),.?":{}|<>_+-=]/)
+    .matches(/[!@#$%^&*(),.?":{}|<>_+=-]/)
     .withMessage("Must contain at least one special character."),
-  body("confirm_password")
+  body("confirmPassword")
     .trim()
     .custom((value, { req }) => {
       if (value !== req.body.password) {
